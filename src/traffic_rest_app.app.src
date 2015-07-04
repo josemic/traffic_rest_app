@@ -1,0 +1,21 @@
+%%-*- mode: erlang -*-
+{application, traffic_rest_app,
+ [
+  {description, "traffic_rest_app"},
+  {vsn, "1"},
+  {modules, []},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  inets,
+                  crypto,
+                  mochiweb,
+                  webmachine
+                 ]},
+  {mod, { traffic_rest_app_app, []}},
+  {env, [
+      {web_ip, "0.0.0.0"},
+      {web_port, 8080}
+  ]}
+ ]}.
