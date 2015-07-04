@@ -15,7 +15,8 @@
                  ]},
   {mod, { traffic_rest_app_app, []}},
   {env, [
-      {web_ip, "0.0.0.0"},
-      {web_port, 8080}
+ % commented out to use configuration from riak core
+ %     {web_ip, "0.0.0.0"},
+ %     {web_port, 8080}
   ]}
  ]}.
