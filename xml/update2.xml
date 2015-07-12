@@ -7,7 +7,6 @@
     <tile_deg level="14" lat="51" lon= "52"/>
     <waynodes maximum="2000"/>
     <wayref id="123123123"/>  <!-- optional, but mandatory if noderef below is given -->
-    <noderef id="5000"/>  <!-- optional -->
-    <payload> this is the payload for way 123123123 node id 5000</payload>
+    <payload> this is the payload for way 123123123</payload>
   </traffic_api>
 </osm_traffic>
