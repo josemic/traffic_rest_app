@@ -32,21 +32,21 @@ to_text(ReqData, Context) ->
           end,
    {Result, ReqData, Context}.
 
- get_params_deg(ReqData, Context)->
+ get_params_deg(ReqData, _Context)->
    Zoom = wrq:get_qs_value("zoom", ReqData),
    Lat = wrq:get_qs_value("lat", ReqData),
    Lon = wrq:get_qs_value("lon", ReqData),
    OSMWayID = wrq:get_qs_value("wayid", "0", ReqData),
-  OSMNodeID = wrq:get_qs_value("nodeid", "0", ReqData),
+   OSMNodeID = wrq:get_qs_value("nodeid", "0", ReqData),
    ZoomParam = list_to_integer(Zoom),
    LatParam = list_to_integer(Lat),
    LonParam = list_to_integer(Lon),
    OSMWayIDParam = list_to_integer(OSMWayID),
    OSMNodeIDParam = list_to_integer(OSMNodeID),
-   {Status, Res} = trafficapp:fetch({deg, ZoomParam, LatParam, LonParam}, {OSMWayIDParam, OSMNodeIDParam}),
+   {_Status, Res} = fetch({deg, ZoomParam, LatParam, LonParam}, {OSMWayIDParam, OSMNodeIDParam}),
    lists:flatten(io_lib:format("~p", [Res])).
 
- get_params_num(ReqData, Context)->
+ get_params_num(ReqData, _Context)->
    Zoom = wrq:get_qs_value("zoom", ReqData),
    TileX = wrq:get_qs_value("tilex", ReqData),
    TileY = wrq:get_qs_value("tiley", ReqData),
@@ -57,8 +57,25 @@ to_text(ReqData, Context) ->
    TileYParam = list_to_integer(TileY),
    OSMWayIDParam = list_to_integer(OSMWayID),
    OSMNodeIDParam = list_to_integer(OSMNodeID),
-   {Status, Res} = trafficapp:fetch({num, ZoomParam, TileXParam, TileYParam}, {OSMWayIDParam, OSMNodeIDParam}),
+   {_Status, Res} = fetch({num, ZoomParam, TileXParam, TileYParam}, {OSMWayIDParam, OSMNodeIDParam}),
    lists:flatten(io_lib:format("~p", [Res])).
 
 %% Example curl:
 %% curl -v -H "Content-Type:text/plain" "http://127.0.0.1:8080/fetch/num?zoom=14&tilex=34&tiley=45&wayid=12&nodeid=640"
+
+
+fetch({deg, ZoomParam, LatParam, LonParam}, {0, 0})->
+  trafficapp:fetch({deg, ZoomParam, LatParam, LonParam});
+
+fetch({deg, ZoomParam, LatParam, LonParam}, {OSMWayIDParam, 0})->
+  trafficapp:fetch({deg, ZoomParam, LatParam, LonParam}, {OSMWayIDParam});
+
+fetch({deg, ZoomParam, LatParam, LonParam}, {OSMWayIDParam, OSMNodeIDParam})->
+  trafficapp:fetch({deg, ZoomParam, LatParam, LonParam}, {OSMWayIDParam, OSMNodeIDParam});
+
+fetch({num, ZoomParam, TileXParam, TileYParam}, {0, 0})->
+trafficapp:fetch({num, ZoomParam, TileXParam, TileYParam});
+fetch({num, ZoomParam, TileXParam, TileYParam}, {OSMWayIDParam, 0})->
+  trafficapp:fetch({num, ZoomParam, TileXParam, TileYParam}, {OSMWayIDParam});
+fetch({num, ZoomParam, TileXParam, TileYParam}, {OSMWayIDParam, OSMNodeIDParam})->
+  trafficapp:fetch({num, ZoomParam, TileXParam, TileYParam}, {OSMWayIDParam, OSMNodeIDParam}).

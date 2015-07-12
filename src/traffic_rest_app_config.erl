@@ -9,7 +9,7 @@
 dispatch() ->
   lists:flatten([
     {["fetch", '*'], traffic_rest_app_fetch_resource, [{trace_dir, "/tmp/traces"}]},
-    {["update", '*'], traffic_rest_app_update_resource, []}
+    {["update"],     traffic_rest_app_update_resource, []}
   ]).
 
 web_config() ->

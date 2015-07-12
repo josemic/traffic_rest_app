@@ -2,10 +2,10 @@
 -export([
   init/1,
   allowed_methods/2,
-  process_post/2,
-  content_types_provided/2,
-  to_text/2,
-  to_xml/2
+  process_post/2
+%%   content_types_provided/2,
+%%   to_text/2,
+%%   to_xml/2
 ]).
 
 -record(context, {
@@ -29,49 +29,49 @@ init(Config) ->
   %%{{trace, "/tmp"}, Config}.  %% debugging code
   {ok, Config}.             %% regular code
 
-content_types_provided(ReqData, Context) ->
-  {[{"text/plain", to_text}, {"text/xml", to_xml}, {"application/xml", to_xml}], ReqData, Context}.
-
-to_text(ReqData, Context) ->
-  Path = wrq:disp_path(ReqData),
-  {Body, Context} = case Path of
-                      "num" ->
-                        get_params_num(ReqData, Context);
-                      "deg" ->
-                        get_params_deg(ReqData, Context);
-                      _Other ->
-                        io_lib:format("Unsupported operation: ~p~n", [Path])
-                    end,
-  {Body, ReqData, Context}.
-
-to_xml(ReqData, Context) ->
-  Path = wrq:disp_path(ReqData),
-  {Body, Context} = case Path of
-                      "num" ->
-                        get_params_num(ReqData, Context);
-                      "deg" ->
-                        get_params_deg(ReqData, Context);
-                      _Other ->
-                        io_lib:format("Unsupported operation: ~p~n", [Path])
-                    end,
-  {Body, ReqData, Context}.
-
-get_params_deg(ReqData, Context) ->
-  Zoom = wrq:get_qs_value("zoom", ReqData),
-  Lat = wrq:get_qs_value("lat", ReqData),
-  Lon = wrq:get_qs_value("lon", ReqData),
-  OSMWayID = wrq:get_qs_value("wayid", "0", ReqData),
-  OSMNodeID = wrq:get_qs_value("nodeid", "0", ReqData),
-  {"Ok", Context#context{type = deg, zoom = Zoom, osmwayID = OSMWayID, osmnodeID = OSMNodeID, lat = Lat, lon = Lon}}.
-
-get_params_num(ReqData, Context) ->
-  Zoom = wrq:get_qs_value("zoom", ReqData),
-  TileX = wrq:get_qs_value("tilex", ReqData),
-  TileY = wrq:get_qs_value("tiley", ReqData),
-  OSMWayID = wrq:get_qs_value("wayid", "0", ReqData),
-  OSMNodeID = wrq:get_qs_value("nodeid", "0", ReqData),
-  {ok, _Res} = trafficapp:fetch({num, list_to_integer(Zoom), list_to_integer(TileX), list_to_integer(TileY)},
-    {list_to_integer(OSMWayID), list_to_integer(OSMNodeID)}, Context).
+%% content_types_provided(ReqData, Context) ->
+%%   {[{"text/plain", to_text}, {"text/xml", to_xml}, {"application/xml", to_xml}], ReqData, Context}.
+%%
+%% to_text(ReqData, Context) ->
+%%   Path = wrq:disp_path(ReqData),
+%%   {Body, Context} = case Path of
+%%                       "num" ->
+%%                         get_params_num(ReqData, Context);
+%%                       "deg" ->
+%%                         get_params_deg(ReqData, Context);
+%%                       _Other ->
+%%                         io_lib:format("Unsupported operation: ~p~n", [Path])
+%%                     end,
+%%   {Body, ReqData, Context}.
+%%
+%% to_xml(ReqData, Context) ->
+%%   Path = wrq:disp_path(ReqData),
+%%   {Body, Context} = case Path of
+%%                       "num" ->
+%%                         get_params_num(ReqData, Context);
+%%                       "deg" ->
+%%                         get_params_deg(ReqData, Context);
+%%                       _Other ->
+%%                         io_lib:format("Unsupported operation: ~p~n", [Path])
+%%                     end,
+%%   {Body, ReqData, Context}.
+%%
+%% get_params_deg(ReqData, Context) ->
+%%   Zoom = wrq:get_qs_value("zoom", ReqData),
+%%   Lat = wrq:get_qs_value("lat", ReqData),
+%%   Lon = wrq:get_qs_value("lon", ReqData),
+%%   OSMWayID = wrq:get_qs_value("wayid", "0", ReqData),
+%%   OSMNodeID = wrq:get_qs_value("nodeid", "0", ReqData),
+%%   {"Ok", Context#context{type = deg, zoom = Zoom, osmwayID = OSMWayID, osmnodeID = OSMNodeID, lat = Lat, lon = Lon}}.
+%%
+%% get_params_num(ReqData, Context) ->
+%%   Zoom = wrq:get_qs_value("zoom", ReqData),
+%%   TileX = wrq:get_qs_value("tilex", ReqData),
+%%   TileY = wrq:get_qs_value("tiley", ReqData),
+%%   OSMWayID = wrq:get_qs_value("wayid", "0", ReqData),
+%%   OSMNodeID = wrq:get_qs_value("nodeid", "0", ReqData),
+%%   {ok, _Res} = trafficapp:fetch({num, list_to_integer(Zoom), list_to_integer(TileX), list_to_integer(TileY)},
+%%     {list_to_integer(OSMWayID), list_to_integer(OSMNodeID)}, Context).
 
 
 allowed_methods(Req, State) ->
@@ -293,13 +293,12 @@ process_post(ReqData, Context) ->
                             end,
   {true, ReqData2, Context2} = case is_record_type(Choice) of
                                  tile_num ->
-                                   {ok, _Res} = trafficapp:update({num, list_to_integer(Level_num), list_to_integer(X), list_to_integer(Y)},
-                                     {list_to_integer(Wayref_id), list_to_integer(Noderef_id)}, Payload),
+                                   {ok, _Res} = update({num, list_to_integer(Level_num), list_to_integer(X), list_to_integer(Y)},
+                                     {Wayref_id, Noderef_id}, Payload),
                                    ReqData1 = wrq:set_resp_header("location", ["/upload?msg=", PayloadXml], ReqData),
                                    {true, ReqData1, Context};
                                  tile_deg ->
-                                   {ok, _Res} = trafficapp:update({deg, list_to_integer(Level_deg), list_to_integer(Lat), list_to_integer(Lon)},
-                                     {list_to_integer(Wayref_id), list_to_integer(Noderef_id)}, Payload),
+                                   {ok, _Res} = update({deg, Level_deg, Lat, Lon},{Wayref_id, Noderef_id}, Payload),
                                    ReqData1 = wrq:set_resp_header("location", ["/upload?msg=", PayloadXml], ReqData),
                                    {true, ReqData1, Context};
                                  false ->
@@ -312,4 +311,27 @@ is_record_type(#tile_num{}) -> tile_num;
 is_record_type(#tile_deg{}) -> tile_deg;
 is_record_type(_) -> false.
 
+update({num, Level_numParam, XParam, YParam}, {Wayref_idParam, Noderef_idParam}, Payload) when Wayref_idParam ==0, Noderef_idParam ==0->
+  trafficapp:update({num, list_to_integer(Level_numParam), list_to_integer(XParam), list_to_integer(YParam)},
+    {list_to_integer(Wayref_idParam), list_to_integer(Noderef_idParam)}, Payload);
 
+update({num, Level_numParam, XParam, YParam}, {Wayref_idParam, Noderef_idParam}, Payload) when Wayref_idParam ==0->
+  trafficapp:update({num, list_to_integer(Level_numParam), list_to_integer(XParam), list_to_integer(YParam)},
+    {list_to_integer(Wayref_idParam), list_to_integer(Noderef_idParam)}, Payload);
+
+update({num, Level_numParam, XParam, YParam}, {Wayref_idParam, Noderef_idParam}, Payload) ->
+  trafficapp:update({num, list_to_integer(Level_numParam), list_to_integer(XParam), list_to_integer(YParam)},
+    {list_to_integer(Wayref_idParam), list_to_integer(Noderef_idParam)}, Payload);
+
+
+update({deg, Level_degParam, LatParam, LonParam}, {Wayref_idParam, Noderef_idParam}, Payload) when Wayref_idParam ==0, Noderef_idParam ==0->
+  trafficapp:update({deg, list_to_integer(Level_degParam), list_to_integer(LatParam), list_to_integer(LonParam)}, Payload);
+
+
+update({deg, Level_degParam, LatParam, LonParam}, {Wayref_idParam, Noderef_idParam}, Payload) when Noderef_idParam ==0->
+  trafficapp:update({deg, list_to_integer(Level_degParam), list_to_integer(LatParam), list_to_integer(LonParam)},
+        {list_to_integer(Wayref_idParam)}, Payload);
+
+update({deg, Level_degParam, LatParam, LonParam}, {Wayref_idParam, Noderef_idParam}, Payload)->
+  trafficapp:update({deg, list_to_integer(Level_degParam), list_to_integer(LatParam), list_to_integer(LonParam)},
+    {list_to_integer(Wayref_idParam), list_to_integer(Noderef_idParam)}, Payload).
