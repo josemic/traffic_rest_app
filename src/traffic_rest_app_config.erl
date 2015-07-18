@@ -14,7 +14,7 @@ dispatch() ->
 
 web_config() ->
   {ok, App} = application:get_application(?MODULE),
-  {ok, Ip} = application:get_env(App, list_to_atom(atom_to_list(web_ip ++ "_" ++ atom_to_list(node()))),
+  {ok, Ip} = application:get_env(App, list_to_atom(atom_to_list(web_ip ++ "_" ++ atom_to_list(node())))),
   {ok, Port} = application:get_env(App, list_to_atom(atom_to_list(web_port) ++ "_" ++ atom_to_list(node()))),
   [
     {ip, Ip},
