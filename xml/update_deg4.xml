@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE osm_traffic SYSTEM "update.dtd">
+
+<osm_traffic version="0.1" generator="OpenStreetMap server">
+  <traffic_api>
+    <version minimum="0.1" maximum="0.1"/>
+    <tile_deg level="14" lat="34" lon= "45"/>
+    <waynodes maximum="2000"/>
+    <noderef id="5000"/>  <!-- invalid, as wayref not given -->
+  </traffic_api>
+</osm_traffic>

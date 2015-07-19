@@ -1,0 +1,31 @@
+<!ELEMENT osm_traffic  (traffic_api)>
+<!ATTLIST osm_traffic version            CDATA #FIXED "0.1">
+<!ATTLIST osm_traffic generator          CDATA #IMPLIED>
+ 
+<!ELEMENT traffic_api (version, (tile_num |tile_deg), waynodes, (wayref, noderef?)?, payload) >
+ 
+<!ELEMENT version EMPTY>
+<!ATTLIST version minimum        CDATA #REQUIRED>
+<!ATTLIST version maximum        CDATA #REQUIRED>
+ 
+<!ELEMENT tile_num EMPTY>
+<!ATTLIST tile_num level         CDATA #REQUIRED>
+<!ATTLIST tile_num x             CDATA #REQUIRED>
+<!ATTLIST tile_num y             CDATA #REQUIRED>
+ 
+<!ELEMENT tile_deg EMPTY>
+<!ATTLIST tile_deg level         CDATA #REQUIRED>
+<!ATTLIST tile_deg lat           CDATA #REQUIRED>
+<!ATTLIST tile_deg lon           CDATA #REQUIRED>
+ 
+<!ELEMENT waynodes EMPTY>
+<!ATTLIST waynodes maximum       CDATA #REQUIRED>
+
+<!ELEMENT noderef EMPTY>
+<!ATTLIST noderef id             CDATA #REQUIRED>
+ 
+<!ELEMENT wayref EMPTY>
+<!ATTLIST wayref id              CDATA #REQUIRED>
+
+<!ELEMENT payload (#PCDATA)>
+

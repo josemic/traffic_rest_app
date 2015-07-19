@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<xs:schema xmlns="http://tempuri.org/update" elementFormDefault="qualified" targetNamespace="http://tempuri.org/update" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="osm_traffic">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="traffic_api" />
+      </xs:sequence>
+      <xs:attribute fixed="0.1" name="version" type="xs:string" />
+      <xs:attribute name="generator" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="traffic_api">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="version" />
+        <xs:choice>
+          <xs:element ref="tile_num" />
+          <xs:element ref="tile_deg" />
+        </xs:choice>
+        <xs:element ref="waynodes" />
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element ref="wayref" />
+          <xs:element minOccurs="0" maxOccurs="1" ref="noderef" />
+        </xs:sequence>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="version">
+    <xs:complexType>
+      <xs:attribute name="minimum" type="xs:string" use="required" />
+      <xs:attribute name="maximum" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tile_num">
+    <xs:complexType>
+      <xs:attribute name="level" type="xs:string" use="required" />
+      <xs:attribute name="x" type="xs:string" use="required" />
+      <xs:attribute name="y" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tile_deg">
+    <xs:complexType>
+      <xs:attribute name="level" type="xs:string" use="required" />
+      <xs:attribute name="lat" type="xs:string" use="required" />
+      <xs:attribute name="lon" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="waynodes">
+    <xs:complexType>
+      <xs:attribute name="maximum" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="noderef">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="wayref">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
