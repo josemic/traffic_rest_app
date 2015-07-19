@@ -14,8 +14,11 @@ dispatch() ->
 
 web_config() ->
   {ok, App} = application:get_application(?MODULE),
-  {ok, Ip} = application:get_env(App, list_to_atom(atom_to_list(web_ip ++ "_" ++ atom_to_list(node())))),
-  {ok, Port} = application:get_env(App, list_to_atom(atom_to_list(web_port) ++ "_" ++ atom_to_list(node()))),
+  IpName = list_to_atom(atom_to_list(web_ip) ++ "_" ++ atom_to_list(node())),
+  PortName = list_to_atom(atom_to_list(web_port) ++ "_" ++ atom_to_list(node())),
+  {ok, Ip} = application:get_env(App, IpName),
+  {ok, Port} = application:get_env(App, PortName),
+  io:format("Node name:~p, Ip address ~p, Port number~p~n", [node(), Ip, Port]),
   [
     {ip, Ip},
     {port, Port},
